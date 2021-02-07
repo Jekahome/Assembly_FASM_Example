@@ -1,0 +1,11 @@
+
+Install NASM
+https://www.nasm.us/pub/nasm/releasebuilds/2.15rc12/win64/
+
+чтобы собрать программу, введите команду
+nasm -f win64 hello.asm
+
+если не было ошибок, то создастся объектный файл вашей программы под названием hello.o
+чтобы ваш объектный файл прошел линкинг и создался исполняемый файл под названием hello, введите команду
+
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\link.exe" hello.obj /subsystem:windows /entry:WinMain  /libpath:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\x64" /nodefaultlib kernel32.lib user32.lib /largeaddressaware:no
