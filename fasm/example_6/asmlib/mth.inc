@@ -1,0 +1,2 @@
+extrn gcd
+extrn factorial
