@@ -41,6 +41,27 @@ db - data byte 8 bit
 dw - data word 16 bit
 dd - data dword 32 bit
 dq - data qword 64 bit (для ELF64)
+
+Можно объявлять переменные, не имеющие определённого начального значения. Такие переменные называются неинициализированными.
+
+Резервирование данных
+x1 db ?
+x2 dw ?,?,?
+x3 dd 10 dup(?)
+
+x1 rb 1
+x2 rw 3
+x3 rd 10
+------------------------------------------------------
+section '.data' writable
+    strnum db "571",0
+    _buffer.size equ 20
+    array db 5,4,3,2,1
+    array_size equ 5
+
+section '.bss' writable
+    _buffer rb _buffer.size  
+
 ```
 
 # Format
@@ -63,9 +84,37 @@ mov rax,10 ; переместить значение 10 в регистр rax
 ; add - сложение
 add rax,20 ; сложить текущее значение в rax и 20 т.е. rax=rax+20
 
+add rax, rbx ; rax=rax+rbx
+
+imul - умножение
+imul rax, rbx ; rax=rax*rbx
+
+mul - умножение зависимое
+mul rbx ; rax=rax*rbx т.е. mul уже расчитан на rax (зависим)
+
+div - деление зависимое
+div rbx ; rax=rax/rbx  т.е. div уже расчитан на rax (зависим)
+
+sub - вычитание  
+sub rax, rbx; rax=rax-rbx  
+
+push - добавление в стек регистра только 64 bit rax при ELF64 или eax 32 bit при ELF
+push rcx
+
+pop  - удаление из стека в обратном порядке добавления
+pop rcx
+
+cmp rax, 0 ; cmp сравнение
+je .print_iter ; je (равно) прыжок на метку если значение cmp еквивалентны/равно
+
+cmp rax, 1
+jle .print_iter ; jle (меньше или равно)  прыжок на метку 
+
 ; call - вызов процедуры
 call _exit
 ```
+
+
 
 # Структура c обьектным файлов
 
@@ -155,10 +204,7 @@ hello:     формат файла elf64-x86-64
   401066:       cd 80                   int    0x80
 ```
 
-
-
-
-# Структура оптимизированная, сразу исполняемый файл
+# Структура оптимизированная, в исполняемый файл
 
 Иммет меньший размер но не имеет обьектный файл
 
@@ -180,9 +226,10 @@ _exit:           ; процедура для выхода
     mov rbx,0        ; Задаем параметр status=0, для возврат 0 означает успешное выполнение
     int 0x80     ; Вызываем функции заданную в rax
 
-```
+
 ; Создание исполняемого файла
-; $ fasm hello_execute.asm  
+; $ fasm hello_execute.asm
+```
 
 # Ортимизация
 
@@ -225,15 +272,23 @@ _exit:           ; процедура для выхода
 ### Системные вызовы
 
 Linux предоставляет API. В большинстве случаев вызов системной функции производится с помощью прерывания `80h`. Следует отметить, что Linux используется fastcall-конвенция передачи параметров. Согласно ей параметры передаются через регистры. Номер вызываемой функции кладется в `eax`, а параметры в регистры `ebx,ecx,edx,esi,edi,ebp`
-№   64bit  32bit
-sys rax    eax
-1   rbx    ebx
-2   rcx    ecx
-3   rdx    edx
-4   rsi    esi
-5   rdi    edi
-6   rbp    ebp
-7   rsp    esp
+
+```
+№  - Номер параметра вызоваемой ф-ции  
+
+№   64bit                 32bit              16 bit     8 bit
+sys  rax (8 byte)         eax  (4 byte)      ax         ah/al сумматор
+1    rbx                  ebx                bx         dh/dl базовый регистр
+2    rcx                  ecx                cx         ch/cl счетчик
+3    rdx                  edx                dx         dh/dl регистр данных
+4    rsi                  esi                si
+5    rdi                  edi                di
+6    rbp                  ebp
+7    rsp                  esp
+
+mm0 .. mm7 ; 64 bits
+r8 .. r15 ; 64 bits
+```
 
 [Узнать номер системной функции, ее описание и параметры](http://www.unusedino.de/linuxassembly/syscall.html). 
 Возьмем, к примеру `int sys_exit(int status)`, она имеет порядковый номер 1 и у нее есть один параметр — код возврата:
@@ -245,7 +300,9 @@ Source: kernel/exit.c
 Action: terminate the current process
 Details: status is return code
 ```
+
 Таким образом мы можем вызвать ее следующим кодом:
+
 ```
 mov eax, 1    ; 1 - номер системной функции
 sub ebx, ebx  ; Задаем параметр status,Кладем 0 в регистр (можно было записать `mov ebx, 0`)
