@@ -1,17 +1,7 @@
 format ELF64
 
-;public _start 
 public gas_print_string
 public mul_from_asm
-
-section '.data' writable
-    msg db "hello, asm!", 0
-
-;section '.text' executable
-;_start:
-;    mov rax, msg
-;    call gas_print_string
-;    call _exit
 
 ; wrap fasm for gas assembler syntax
 section '.gas_print_string' executable
@@ -19,7 +9,6 @@ section '.gas_print_string' executable
 ; output| false
 gas_print_string:
     mov rax, rdi
-    ;mov rax, msg
     call print_string
     mov rax, 8
     ret
@@ -31,7 +20,6 @@ mul_from_asm:
     mov rax, rdi
     mul rsi
     ret
-
 
 section '.print_string' executable
 ; input|rax = string
@@ -52,9 +40,6 @@ print_string:
     pop rbx 
     pop rax 
     ret     ; ret - обратный возврат к месту вызова
-
-
-
 
 section '.length_string' executable
 ; input  | rax = string

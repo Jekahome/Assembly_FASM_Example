@@ -41,7 +41,7 @@ int main(void){
     printf("%lld\n",mul(5,10));
     printf("%lld\n",mul_from_asm(5,10));
 
-    gas_to_fasm_print_string("hello, world!");
+    gas_to_fasm_print_string("Hello, World!");
     return 0;
 }
 // gcc main.c -o main

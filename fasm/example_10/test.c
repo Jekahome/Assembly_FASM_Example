@@ -1,12 +1,5 @@
-// https://www.youtube.com/watch?v=OIrHZWyWL9U&t=335s
-#include <stdio.h>
-
 typedef unsigned long long int uint;
-/*
-uint mul(uint x, uint y){
-    return x * y;
-}
-*/
+
 /*
  GNU Assembler GAS = AT&T = `mov $10, %rax` (rax=10 т.е. слева на право)
  Assembler FASM   = INTEL = `mov rax, 10` (rax=10 с права на лево)
@@ -24,24 +17,7 @@ GNU GAS Assembler for FFI C:
     stack = остальные аргумент
     rax = возвращаемое значение
 */
-/*
-;input |rdi = x
-;input |rsi = y
-;output|rax = uint
-*/
-uint mul_c(uint x, uint y){
-   asm("mov %rdi, %rax");// rax=rdi
-   asm("mul %rsi");// rax=rax*rsi
+
+uint sum(uint x, uint y){
+    return x + y;
 }
-
-extern uint mul_from_asm(uint x, uint y);
-extern uint gas_print_string(char *str);
-
-uint c_print() {
-    printf("HI\n");
-    char *str = "heelllo";
-    return gas_print_string(str);
-}
-
-// gcc -no-pie src/main.c src/ex.o -o src/main
-// ./main
