@@ -3,6 +3,11 @@
 format ELF64
 public _start    ; процедура точка входа, public для видимости
 
+; show size
+; $ size ex.o
+;   text    data     bss     dec     hex filename
+;    434       4      21     459     1cb ex.o
+
 section '.data' writable
     strnum db "571",0
     _buffer.size equ 20
