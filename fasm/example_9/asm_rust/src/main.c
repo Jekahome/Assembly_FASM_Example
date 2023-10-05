@@ -35,9 +35,9 @@ uint mul_c(uint x, uint y){
 }
 
 extern uint mul_from_asm(uint x, uint y);
-extern uint gas_print_string(char *str);
+extern char* gas_print_string(char *str);
 
-uint c_print() {
+char* c_print() {
     printf("HI\n");
     char *str = "heelllo";
     return gas_print_string(str);

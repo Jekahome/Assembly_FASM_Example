@@ -3,14 +3,18 @@ format ELF64
 public gas_print_string
 public mul_from_asm
 
+section '.data' writeable
+    datas db "hello, world!", 0
+
 ; wrap fasm for gas assembler syntax
 section '.gas_print_string' executable
 ; input | 1 arg
 ; output| false
 gas_print_string:
     mov rax, rdi
+    ;mov rax,datas
     call print_string
-    mov rax, 8
+    ;mov rax, 8
     ret
 
 section '.mul_from_asm' executable
@@ -66,3 +70,5 @@ _exit:
 ; fasm ex.asm    
 ; gcc -no-pie main.c ex.o -o main
 ; ./main
+
+

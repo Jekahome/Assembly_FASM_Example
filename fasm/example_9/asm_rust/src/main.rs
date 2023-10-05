@@ -44,8 +44,8 @@ extern {
     // extern ASM
     fn mul_from_asm(x: libc::c_int, y: libc::c_int) -> libc::c_int;
     // extern ASM
-    fn gas_print_string(s:*const std::os::raw::c_char) -> libc::c_int;
-    fn c_print() -> libc::c_int;
+    fn gas_print_string(s:*const std::os::raw::c_char) -> *mut std::os::raw::c_char;
+    fn c_print() -> *const std::os::raw::c_char;
 }
 // ----------------------------------------------------------------
 
@@ -63,19 +63,15 @@ fn main() {
     println!("mul_from_asm:{output}");
     assert_eq!(5*10, output);
 
-// not working ----------------------------------------------------- 
-/* 
-    use std::ffi::CString;
-    let rust_str = "Hello, World!".to_owned();
-    let c_string = CString::new(rust_str).expect("CString::new failed");
-    let c_char_ptr: *const libc::c_char = c_string.into_raw();
-*/
-    let s = std::ffi::CString::new("data data data data").expect("CString::new failed");
 
-    unsafe { 
-        //gas_print_string(s.as_ptr());  
-        let res = c_print(); 
-        println!("res:{res}");
-    };
+
+    use std::ffi::CString;  
+    let c_string = CString::new("aaa   bbb   ccc").expect("CString::new failed");
+    let raw = c_string.into_raw();
+     unsafe { 
+        let res:*mut i8 = gas_print_string(raw);  
+        let c_string = CString::from_raw(res);
+        println!("res:{:?}",c_string);
+    }; 
  
 }

@@ -14,6 +14,8 @@ compiler:
 build:
 	cargo build
 
-build_run_asm:
-	fasm src/ex.asm; ld src/ex.o -o src/ex; ./src/ex
+# build_asm:	fasm src/ex.asm; ld src/ex.o -o src/ex; ./src/ex
+
+  	
+	
 
